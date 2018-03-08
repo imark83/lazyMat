@@ -4,37 +4,37 @@
 #include "vmat.hpp"
 
 template <class T>
-class matOperation_ : public virtualMat_<T> {
+class MatOperation_ : public VirtualMat_<T> {
 public:
-  matOperation_(int rows, int cols) : virtualMat_<T>(rows, cols) {}
+  MatOperation_(int rows, int cols) : VirtualMat_<T>(rows, cols) {}
 };
 
 template <class T>
-class unaryMatOperation_ : public matOperation_<T> {
+class UnaryMatOperation_ : public MatOperation_<T> {
 public:
-  const virtualMat_<T> *op;
-  unaryMatOperation_(const virtualMat_<T> &op)
-      : op(&op), matOperation_<T>(op.rows, op.cols) {}
+  const VirtualMat_<T> *op;
+  UnaryMatOperation_(const VirtualMat_<T> &op)
+      : op(&op), MatOperation_<T>(op.rows, op.cols) {}
 };
 
 template <class T>
-class binaryMatOperation_ : public matOperation_<T> {
+class BinaryMatOperation_ : public MatOperation_<T> {
 public:
-  const virtualMat_<T> *op1;
-  const virtualMat_<T> *op2;
+  const VirtualMat_<T> *op1;
+  const VirtualMat_<T> *op2;
 
 
-  binaryMatOperation_(const virtualMat_<T> &op1, const virtualMat_<T> &op2)
-      : op1(&op1), op2(&op2), matOperation_<T>(op1.rows, op1.cols) {}
+  BinaryMatOperation_(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2)
+      : op1(&op1), op2(&op2), MatOperation_<T>(op1.rows, op1.cols) {}
 };
 
 // ADDITION
 template <class T>
-class matAdd_ : public binaryMatOperation_<T> {
+class MatAdd_ : public BinaryMatOperation_<T> {
 public:
 
-  matAdd_(const virtualMat_<T> &op1, const virtualMat_<T> &op2)
-      : binaryMatOperation_<T>(op1, op2) {
+  MatAdd_(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2)
+      : BinaryMatOperation_<T>(op1, op2) {
     if(op1.rows != op2.rows || op1.cols != op2.cols) {
       std::cerr << "addition dimmensions missmatch" << std::endl;
       exit(1);
@@ -56,19 +56,19 @@ public:
 };
 
 template <class T>
-matAdd_<T> operator+(const virtualMat_<T> &op1, const virtualMat_<T> &op2) {
-  matAdd_<T> rop(op1, op2);
+MatAdd_<T> operator+(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2) {
+  MatAdd_<T> rop(op1, op2);
   return rop;
 }
 
 
 // SUBSTRACTION
 template <class T>
-class matSub_ : public binaryMatOperation_<T> {
+class MatSub_ : public BinaryMatOperation_<T> {
 public:
 
-  matSub_(const virtualMat_<T> &op1, const virtualMat_<T> &op2)
-      : binaryMatOperation_<T>(op1, op2) {
+  MatSub_(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2)
+      : BinaryMatOperation_<T>(op1, op2) {
     if(op1.rows != op2.rows || op1.cols != op2.cols) {
       std::cerr << "addition dimmensions missmatch" << std::endl;
       exit(1);
@@ -90,16 +90,16 @@ public:
 };
 
 template <class T>
-matSub_<T> operator-(const virtualMat_<T> &op1, const virtualMat_<T> &op2) {
-  matSub_<T> rop(op1, op2);
+MatSub_<T> operator-(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2) {
+  MatSub_<T> rop(op1, op2);
   return rop;
 }
 
 template <class T>
-class matNeg_ : public unaryMatOperation_<T> {
+class MatNeg_ : public UnaryMatOperation_<T> {
 public:
-  matNeg_(const virtualMat_<T> &op)
-      : unaryMatOperation_<T>(op) {}
+  MatNeg_(const VirtualMat_<T> &op)
+      : UnaryMatOperation_<T>(op) {}
   void eval () const {
     if(this->data != NULL) {
       std::cerr << "reevaluation" << std::endl;
@@ -113,8 +113,8 @@ public:
 };
 
 template <class T>
-matNeg_<T> operator-(const virtualMat_<T> &op) {
-  matNeg_<T> rop(op);
+MatNeg_<T> operator-(const VirtualMat_<T> &op) {
+  MatNeg_<T> rop(op);
   return rop;
 }
 

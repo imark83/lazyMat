@@ -4,12 +4,12 @@
 #include "matOp.hpp"
 
 template <class T>
-class Mat_ : public virtualMat_<T> {
+class Mat_ : public VirtualMat_<T> {
 public:
 
   // CONSTRUCTOR
-  Mat_() : virtualMat_<T>() {}
-  Mat_(int rows, int cols) : virtualMat_<T>(rows, cols) {
+  Mat_() : VirtualMat_<T>() {}
+  Mat_(int rows, int cols) : VirtualMat_<T>(rows, cols) {
     this->data = new int[rows*cols];
   }
 
@@ -31,7 +31,7 @@ public:
 
     return *this;
   }
-  Mat_ & operator=(const matOperation_<T> &op) {
+  Mat_ & operator=(const MatOperation_<T> &op) {
     op.eval();
     delete [] this->data;
     this->rows = op.rows; this->cols = op.cols;

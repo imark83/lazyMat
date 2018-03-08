@@ -25,7 +25,7 @@ std::ostream & operator<<(std::ostream &output, const Mat_<T> &op) {
 }
 
 template <class T>
-std::ostream & operator<<(std::ostream &output, const matOperation_<T> &op) {
+std::ostream & operator<<(std::ostream &output, const MatOperation_<T> &op) {
   Mat_<T> tmp;
   tmp = op;
   output << tmp;

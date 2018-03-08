@@ -90,20 +90,19 @@ void MatAdd_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
-      (*this)(i,j) += (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) += (*(this->op2))(i);
   } else if(this->op2->data == NULL) {
     this->op1->eval(); this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
-      (*this)(i,j) += this->op1->data[this->op2->cols*i+j];
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) += (*(this->op1))(i);
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
-    (*this)(i,j) =
-    (*(this->op1))(i,j) + (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = (*(this->op1))(i) + (*(this->op2))(i);
   }
 }
 template <class T>
@@ -125,13 +124,13 @@ void MatNeg_<T>::eval() const {
     this->op->eval();
     this->data = this->op->data;
     this->op->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) = -(*this)(i,j);
 
   } else {
     this->op->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) = -(*(this->op))(i,j);
   }
 }
@@ -158,12 +157,12 @@ void MatSub_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) -= (*(this->op2))(i,j);
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) =
           (*(this->op1))(i,j) - (*(this->op2))(i,j);
   }
@@ -186,13 +185,13 @@ void MatScalarProd_<T>::eval() const {
     this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j) {
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
       (*this)(i,j) *= (this->op1);
     }
   } else {
     this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j) {
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
       (*this)(i,j) =
             (this->op1) * (*(this->op2))(i,j);
     }
@@ -222,13 +221,13 @@ void MatScalarDivision_<T>::eval() const {
     this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j) {
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
       (*this)(i,j) /= (this->op1);
     }
   } else {
     this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j) {
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
       (*this)(i,j) =
             (*(this->op2))(i,j) / (this->op1);
     }
@@ -253,10 +252,10 @@ void MatProd_<T>::eval() const {
     exit(1);
   }
   this->data = new T[this->rows*this->cols];
-  for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j) {
+  for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
     // (*this)(i,j) = T(0);
     (*this)(i,j) = T(0);
-    for(int k=0; k<this->op1->cols; ++k)
+    for(size_t k=0; k<this->op1->cols; ++k)
       (*this)(i,j) = (*this)(i,j) + (*(this->op1))(i,k) * (*(this->op2))(k,j);
   }
 }
@@ -282,18 +281,18 @@ void MatPointProd_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) *= (*(this->op2))(i,j);
   } else if(this->op2->data == NULL) {
     this->op1->eval(); this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) *= this->op1->data[this->op2->cols*i+j];
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
     (*this)(i,j) =
     (*(this->op1))(i,j) * (*(this->op2))(i,j);
   }
@@ -326,12 +325,12 @@ void MatPointDiv_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
       (*this)(i,j) /= (*(this->op2))(i,j);
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(int i=0; i<this->rows; ++i) for(int j=0; j<this->cols; ++j)
+    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
     (*this)(i,j) =
     (*(this->op1))(i,j) / (*(this->op2))(i,j);
   }
@@ -352,9 +351,9 @@ void MatDiffX_<T>::eval() const {
     exit(1);
   }
   this->data = new T[this->rows*this->cols];
-  for(int i=this->rows-2; i>=0; --i) for(int j=0; j<this->cols; ++j)
+  for(size_t i=this->rows-2; i>=0; --i) for(size_t j=0; j<this->cols; ++j)
     (*this)(i,j) = (*(this->op))(i+1,j) - (*(this->op))(i,j);
-  for(int j=0; j<this->rows; ++j)
+  for(size_t j=0; j<this->rows; ++j)
     (*this)(this->rows-1,j) = T(0);
 
 
@@ -376,9 +375,9 @@ void MatDiffY_<T>::eval() const {
     exit(1);
   }
   this->data = new T[this->rows*this->cols];
-  for(int j=this->cols-2; j>=0; --j) for(int i=0; i<this->rows; ++i)
+  for(size_t j=this->cols-2; j>=0; --j) for(size_t i=0; i<this->rows; ++i)
     (*this)(i,j) = (*(this->op))(i,j+1) - (*(this->op))(i,j);
-  for(int i=0; i<this->rows; ++i)
+  for(size_t i=0; i<this->rows; ++i)
     (*this)(i,this->cols-1) = T(0);
 }
 template <class T>

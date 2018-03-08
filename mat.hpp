@@ -1,6 +1,7 @@
 #ifndef __MAT_HPP__
 #define __MAT_HPP__
 
+#include <vector>
 #include "matOp.hpp"
 
 template <class T>
@@ -11,6 +12,12 @@ public:
   Mat_() : VirtualMat_<T>() {}
   Mat_(int rows, int cols) : VirtualMat_<T>(rows, cols) {
     this->data = new T[rows*cols];
+  }
+  Mat_(int rows, int cols, std::vector<T> op)
+        : VirtualMat_<T>(rows, cols) {
+    this->data = new T[rows*cols];
+    for(size_t i=0; i<rows*cols; ++i)
+      this->data[i] = op[i];
   }
 
   // ASSIGNMENT

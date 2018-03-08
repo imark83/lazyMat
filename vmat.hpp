@@ -27,6 +27,9 @@ public:
   T & operator()(int i, int j) const {
     return data[cols*i+j];
   }
+  T & operator()(int i) const {
+    return data[i];
+  }
   // T & operator()(int i, int j) {
   //   return data[cols*i+j];
   // }

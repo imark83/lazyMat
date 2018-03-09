@@ -1,6 +1,7 @@
 #ifndef __MATRIX_OP_HPP__
 #define __MATRIX_OP_HPP__
 
+#include "vmat.hpp"
 
 // MACRO FOR UNARY MATRIX OPERATION
 #define UNARY_MAT_OPERATION(className) \
@@ -33,9 +34,6 @@ public:\
     void eval() const;\
   };
 
-
-
-#include "vmat.hpp"
 
 template <class T>
 class MatOperation_ : public VirtualMat_<T> {
@@ -124,14 +122,14 @@ void MatNeg_<T>::eval() const {
     this->op->eval();
     this->data = this->op->data;
     this->op->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) = -(*this)(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = -(*this)(i);
 
   } else {
     this->op->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) = -(*(this->op))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = -(*(this->op))(i);
   }
 }
 template <class T>
@@ -157,14 +155,19 @@ void MatSub_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) -= (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) -= (*(this->op2))(i);
+  } else if(this->op2->data == NULL) {
+    this->op1->eval(); this->op2->eval();
+    this->data = this->op2->data;
+    this->op2->data = NULL;
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = -((*this)(i) - (*(this->op1))(i));
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) =
-          (*(this->op1))(i,j) - (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = (*(this->op1))(i) - (*(this->op2))(i);
   }
 }
 template <class T>
@@ -185,15 +188,15 @@ void MatScalarProd_<T>::eval() const {
     this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
-      (*this)(i,j) *= (this->op1);
+    for(size_t i=0; i<this->rows*this->cols; ++i) {
+      (*this)(i) *= (this->op1);
     }
   } else {
     this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
-      (*this)(i,j) =
-            (this->op1) * (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i) {
+      (*this)(i) =
+            (this->op1) * (*(this->op2))(i);
     }
   }
 }
@@ -204,6 +207,14 @@ MatScalarProd_<T> operator*(const T op1, const VirtualMat_<T> &op2) {
 template <class T>
 MatScalarProd_<T> operator*(const VirtualMat_<T> &op2, const T op1) {
   return MatScalarProd_<T>(op1, op2);
+}
+template <class T>
+MatScalarProd_<T> operator*(const int op1, const VirtualMat_<T> &op2) {
+  return MatScalarProd_<T>(T(op1), op2);
+}
+template <class T>
+MatScalarProd_<T> operator*(const VirtualMat_<T> &op2, const int op1) {
+  return MatScalarProd_<T>(T(op1), op2);
 }
 
 
@@ -221,21 +232,24 @@ void MatScalarDivision_<T>::eval() const {
     this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
-      (*this)(i,j) /= (this->op1);
+    for(size_t i=0; i<this->rows*this->cols; ++i) {
+      (*this)(i) /= (this->op1);
     }
   } else {
-    this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
-      (*this)(i,j) =
-            (*(this->op2))(i,j) / (this->op1);
+    for(size_t i=0; i<this->rows*this->cols; ++i) {
+      (*this)(i) =
+            (*(this->op2))(i) / (this->op1);
     }
   }
 }
 template <class T>
 MatScalarDivision_<T> operator/(const VirtualMat_<T> &op2, const T op1) {
   return MatScalarDivision_<T>(op1, op2);
+}
+template <class T>
+MatScalarDivision_<T> operator/(const VirtualMat_<T> &op2, const int op1) {
+  return MatScalarDivision_<T>(T(op1), op2);
 }
 
 
@@ -251,6 +265,8 @@ void MatProd_<T>::eval() const {
     std::cerr << "reevaluation" << std::endl;
     exit(1);
   }
+  this->op1->eval();
+  this->op2->eval();
   this->data = new T[this->rows*this->cols];
   for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j) {
     // (*this)(i,j) = T(0);
@@ -281,20 +297,19 @@ void MatPointProd_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) *= (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) *= (*(this->op2))(i);
   } else if(this->op2->data == NULL) {
     this->op1->eval(); this->op2->eval();
     this->data = this->op2->data;
     this->op2->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) *= this->op1->data[this->op2->cols*i+j];
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) *=(*(this->op1))(i);
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-    (*this)(i,j) =
-    (*(this->op1))(i,j) * (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+    (*this)(i) = (*(this->op1))(i) * (*(this->op2))(i);
   }
 }
 template <class T>
@@ -325,14 +340,19 @@ void MatPointDiv_<T>::eval() const {
     this->op1->eval(); this->op2->eval();
     this->data = this->op1->data;
     this->op1->data = NULL;
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-      (*this)(i,j) /= (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) /= (*(this->op2))(i);
+  } else if(this->op2->data == NULL) {
+    this->op1->eval(); this->op2->eval();
+    this->data = this->op2->data;
+    this->op2->data = NULL;
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = (*(this->op1))(i) / (*this)(i);
   } else {
     this->op1->eval(); this->op2->eval();
     this->data = new T[this->rows*this->cols];
-    for(size_t i=0; i<this->rows; ++i) for(size_t j=0; j<this->cols; ++j)
-    (*this)(i,j) =
-    (*(this->op1))(i,j) / (*(this->op2))(i,j);
+    for(size_t i=0; i<this->rows*this->cols; ++i)
+      (*this)(i) = (*(this->op1))(i) / (*(this->op2))(i);
   }
 }
 template <class T>
@@ -356,13 +376,11 @@ void MatDiffX_<T>::eval() const {
   for(size_t j=0; j<this->rows; ++j)
     (*this)(this->rows-1,j) = T(0);
 
-
 }
 template <class T>
 MatDiffX_<T> diffX(const VirtualMat_<T> &op) {
   return MatDiffX_<T>(op);
 }
-
 
 
 

@@ -29,6 +29,6 @@ int main(int argc, char const *argv[]) {
 
 
 
-  } while (0);
+  } while (1);
   return 0;
 }

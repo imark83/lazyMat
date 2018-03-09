@@ -2,6 +2,7 @@
 #define __MAT_HPP__
 
 #include <vector>
+#include <cstring>
 #include "matOp.hpp"
 
 template <class T>
@@ -12,6 +13,11 @@ public:
   Mat_() : VirtualMat_<T>() {}
   Mat_(int rows, int cols) : VirtualMat_<T>(rows, cols) {
     this->data = new T[rows*cols];
+  }
+  Mat_(const Mat_ &op) : VirtualMat_<T>(op.rows, op.cols) {
+    if (op.data != NULL)
+    this-> data = new T[op.rows*op.cols];
+    memcpy(this->data, op.data, op.rows*op.cols*sizeof(T));
   }
   Mat_(int rows, int cols, std::vector<T> op)
         : VirtualMat_<T>(rows, cols) {

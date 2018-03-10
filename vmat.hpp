@@ -1,6 +1,8 @@
 #ifndef __VMAT_HPP__
 #define __VMAT_HPP__
 
+typedef std::complex<double> Complex;
+
 
 template <class T>
 T min(T a, T b) {if(a<b) return a; return b;}

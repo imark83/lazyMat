@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstring>
 #include "matOp.hpp"
+#include <complex>
 
 template <class T>
 class Mat_ : public VirtualMat_<T> {
@@ -15,7 +16,7 @@ public:
     this->data = new T[rows*cols];
   }
   Mat_(const Mat_ &op) : VirtualMat_<T>(op.rows, op.cols) {
-    if (op.data != NULL)
+    // if (op.data != NULL)
     this-> data = new T[op.rows*op.cols];
     memcpy(this->data, op.data, op.rows*op.cols*sizeof(T));
   }
@@ -24,6 +25,15 @@ public:
     this->data = new T[rows*cols];
     for(size_t i=0; i<rows*cols; ++i)
       this->data[i] = op[i];
+  }
+
+  operator Mat_<std::complex<double> >() const {
+    std::cout << "my cast!" << std::endl;
+    Mat_<std::complex<double> > rop(this->rows,this->cols);
+    for(size_t i = 0; i<this->rows*this->cols; ++i)
+      rop(i) = this->data[i];
+
+    return rop;
   }
 
   // ASSIGNMENT

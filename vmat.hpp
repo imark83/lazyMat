@@ -1,6 +1,7 @@
 #ifndef __VMAT_HPP__
 #define __VMAT_HPP__
 
+#include <complex>
 typedef std::complex<double> Complex;
 
 

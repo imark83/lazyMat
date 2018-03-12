@@ -3,6 +3,9 @@
 
 #include "vmat.hpp"
 
+template <class T>
+class Mat_;
+
 // MACRO FOR UNARY MATRIX OPERATION
 #define UNARY_MAT_OPERATION(className) \
   template <class T>\
@@ -39,6 +42,9 @@ template <class T>
 class MatOperation_ : public VirtualMat_<T> {
 public:
   MatOperation_(int rows, int cols) : VirtualMat_<T>(rows, cols) {}
+
+  operator Mat_<std::complex<double> >() const;
+
 };
 
 template <class T>
@@ -107,6 +113,13 @@ template <class T>
 MatAdd_<T> operator+(const VirtualMat_<T> &op1, const VirtualMat_<T> &op2) {
   return MatAdd_<T>(op1, op2);
 }
+
+// MatAdd_<Complex> operator+(VirtualMat_<Complex> &op1,
+//       VirtualMat_<double> &op2) {
+//   CMat tmp(op2);
+//   return op1 + tmp;
+// }
+
 
 
 // MATRIX MINUS UNARY OPERATOR

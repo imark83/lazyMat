@@ -2,6 +2,7 @@
 #define __MATRIX_OP_HPP__
 
 #include "vmat.hpp"
+#include <iostream>
 
 template <class T>
 class Mat_;
@@ -43,7 +44,7 @@ class MatOperation_ : public VirtualMat_<T> {
 public:
   MatOperation_(int rows, int cols) : VirtualMat_<T>(rows, cols) {}
 
-  operator Mat_<std::complex<double> >() const;
+  operator Mat_<Complex>() const;
 
 };
 

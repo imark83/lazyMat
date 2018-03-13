@@ -9,30 +9,21 @@ typedef Mat_<double> Mat;
 typedef Mat_<Complex> CMat;
 
 
-template<>
-MatOperation_<double>::operator CMat() const{
-  std::cout << "my cast OP!" << std::endl;
-  CMat rop(this->rows,this->cols);
-  this->eval();
-  for(size_t i=0; i<rows*cols; ++i)
-  rop(i) = (*this)(i);
-  this->data = NULL;
-  return rop;
-}
 
-CMat operator+(VirtualMat_<Complex> &op1, VirtualMat_<double> &op2) {
-  op2.eval(); op1.eval();
-  Mat resolvedOp2(op2);
-  CMat rop(resolvedOp2);
-  rop = op1 + rop;
-  return rop;
-}
-//
-// MatAdd_<Complex> operator+(
-//   VirtualMat_<double> &op2,
-//     VirtualMat_<Complex> &op1) {
-//   return op1+op2;
-// }
+// COMPLEX FUNCTIONS
+
+CMat conj(const VirtualMat_<Complex> &op);
+Mat abs(const VirtualMat_<Complex> &op);
+Mat real(const VirtualMat_<Complex> &op);
+double norm(const VirtualMat_<Complex> &op, int n=2);
+double norm2(const VirtualMat_<Complex> &op);
+double norm1(const VirtualMat_<Complex> &op);
+
+
+// sign of real part
+CMat sign(const VirtualMat_<Complex> &op);
+// max between real part of CMat and number
+CMat max(const VirtualMat_<Complex> &op1, double op2);
 
 
 #endif

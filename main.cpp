@@ -11,8 +11,8 @@ void getRand (Mat_<T> &rop) {
 
 int main(int argc, char const *argv[]) {
   do {
-    Mat a(3,3,{1,2,3,4,5,6,7,8,9});
-    Mat b(3,3,{5,6,7,8,9,10,11,12,13});
+    Mat a(3,3,{1,2,3,4,5,6,7,-8,9});
+    Mat b(3,3,{5,6,7,8,9,10,11,12,-13});
     // Mat_<double> c(3,4,{2,3,4,5,6,7,8,9,10,11,12,13,14,15,16});
     // Mat_<double> d(3,3,{2,3,4,5,6,7,8,9,10,11,12,13});
 
@@ -20,11 +20,15 @@ int main(int argc, char const *argv[]) {
     std::cout << "b = \n" << b << std::endl;
     // std::cout << "c = \n" << c << std::endl;
 
-    CMat c(a);
+    CMat c(a),d(b);
     a= (b+a);
-    c=a;
-    c = c*Complex(0,1) + CMat(b);
+    c= (a+b);
+    d = c+Complex(0,1)*d;
+    std::cout << "d = \n" << d << std::endl;
+
+    c = max(d,20.0);
     std::cout << "c = \n" << c << std::endl;
+
 
 
   } while (0);

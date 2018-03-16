@@ -28,5 +28,6 @@ CMat max(const VirtualMat_<Complex> &op1, double op2);
 
 
 CMat operator+(VirtualMat_<Complex> &op1, VirtualMat_<double> &op2);
+CMat operator+(VirtualMat_<double> &op1, VirtualMat_<Complex> &op2);
 
 #endif

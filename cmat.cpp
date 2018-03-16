@@ -11,21 +11,14 @@ MatOperation_<double>::operator CMat() const{
   return rop;
 }
 
+
+
 Mat real(const VirtualMat_<Complex> &op) {
   op.eval();
   Mat rop(op.rows,op.cols);
   for(size_t i=0; i<rop.rows*rop.cols; ++i)
     rop(i) = std::real(op(i));
 }
-
-CMat operator+(VirtualMat_<Complex> &op1, VirtualMat_<double> &op2) {
-  op2.eval(); op1.eval();
-  Mat resolvedOp2(op2);
-  CMat rop(resolvedOp2);
-  rop = op1 + rop;
-  return rop;
-}
-
 
 //
 double norm(const VirtualMat_<Complex> &op, int n) {

@@ -16,8 +16,9 @@ CMat conj(const VirtualMat_<Complex> &op);
 Mat abs(const VirtualMat_<Complex> &op);
 Mat real(const VirtualMat_<Complex> &op);
 double norm(const VirtualMat_<Complex> &op, int n=2);
-double norm2(const VirtualMat_<Complex> &op);
+double norm0(const VirtualMat_<Complex> &op);
 double norm1(const VirtualMat_<Complex> &op);
+double norm2(const VirtualMat_<Complex> &op);
 
 
 // sign of real part

@@ -26,8 +26,10 @@ int main(int argc, char const *argv[]) {
     d = c+Complex(0,1)*d;
     std::cout << "d = \n" << d << std::endl;
 
-    c = max(d,20.0);
+    c = a+b+c;
     std::cout << "c = \n" << c << std::endl;
+
+
 
 
 
